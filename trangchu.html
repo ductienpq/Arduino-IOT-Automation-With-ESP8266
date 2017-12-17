@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="socket.io/socket.io.js"></script>
+
+
+
+<title> Điều khiển thiết bị IoT </title>
+<!-- <script src="jquery.js"></script> -->
+<script src="process.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<style>
+</style>
+
+</head>
+<body>
+</br>
+<center>
+  <font face="Verdana" font size="5" color="red">
+  <h3><marquee>QUẢN LÝ VÀ ĐIỀU KHIỂN THIẾT BỊ QUA INTERNET</marquee></h3>
+  </font>
+</center>
+</br>
+<div class="tab">
+  <button id="btntabControl">Điều khiển thiết bị</button>
+  <button id="btntabSetting">Cấu hình thiết bị</button>
+  <button id="btntabData" >Thu thập dữ liệu</button>
+
+
+
+
+</div>
+
+<div id="Setting" class="tabcontent">
+<h3>CẤU HÌNH ESP8266 </h3>
+  <table width="1000" border="0" >
+  <tr>
+    <td width="200">&nbsp Wifi SSID</td>
+    <td width="843"><input type="text" id="SSID" name="SSID" placeholder="Tên wifi" size="15" maxlength="30" required/>
+      Pass 
+    <input type="text" id="SSID_Password" name="SSID_Password" placeholder="Mật khẩu" size="15" maxlength="15" required/></td>
+  </tr>
+  <tr>
+    <td>&nbsp Server</td>
+    <td><input type="text" id="Server_IP" name="Server_IP" placeholder="Địa chỉ Server" size="15" maxlength="15" required/>
+      Cổng
+        <input type="text" id="Server_Port" name="Server_Port" placeholder="Địa chỉ Cổng" size="15" maxlength="15" required/>
+    </td>
+  </tr>
+  </table>
+
+  <div class="btn-group">  
+    <td align="char"><button type="button" class="btn btn-primary" id="btnEsp" name="btnEsp" value="OK" type="button" >Lưu cấu hình</button>
+    <button type="button" class="btn btn-primary" id="btnEspSyn" name="btnEspSyn" value="OK" type="button" >Đồng bộ</button>
+  </td>
+  </div> 
+
+
+
+  <table width="1000" border="0" >
+  <h3> &nbsp&nbsp CẤU HÌNH CẢM BIẾN </h3>
+  <tr>
+    <td width="200">&nbsp Tần suất cập nhật (phút)</td>
+    <td width="843"><input type="text" id="Sensor_Freq" name="Sensor_Freq" placeholder="Tần suất" size="15" maxlength="15" required/></td>
+  </tr>
+    </table>
+  <div class="btn-group">
+      <button type="button" class="btn btn-primary" id="btnSensor"  name="btnSensor" value="OK" type="button">Lưu cấu hình</button>
+      <button type="button" class="btn btn-primary" id="btnSensorSyn"  name="btnSensorSyn" value="OK" type="button">Đồng bộ</button>
+
+  </div>
+ 
+
+  <table width="1000" border="0" >
+  <h3> &nbsp&nbsp CẤU HÌNH TỰ ĐỘNG THÔNG GIÓ</h3>
+  <tr>
+    <td width="200">&nbsp Nhiệt độ(ºc)</td>
+    <td width="843"><input type="text" id="Sensor_t" name="Sensor_t" placeholder="Nhiệt độ" size="10" maxlength="10" required/></td>
+  </tr>
+  <tr>
+    <td>&nbsp Độ ẩm (%)</td>
+    <td><input type="text" id="Sensor_h" name="Sensor_h" placeholder="Độ ẩm" size="10" maxlength="10" required/></td>
+  </tr>
+  </table>
+
+  <div class="btn-group">
+
+    <button type="button" class="btn btn-primary"  id="btnRelay" name="btnRelay" value="OK" type="button">Lưu cấu hình</button>
+    <button type="button" class="btn btn-primary"  id="btnRelaySyn" name="btnRelaySyn" value="OK" type="button">Đồng bộ</button>
+  </div>
+
+
+</div>
+<div id="alertBtn">
+</div>
+
+</div>
+  </div>
+
+<div id="Control" class="tabcontent">
+<table width="1000" border="0" >
+
+  
+  <div id="deviceStatus">
+   <h3> &nbsp&nbspChưa Kết nối Thiết bị</h3>  
+  </div>
+
+ 
+  <div id="Device">
+     <div class="onoffswitch">
+        <input type="checkbox" name="deviceCheckbox" class="onoffswitch-checkbox" id="deviceCheckbox" disabled="disabled">
+        <label class="onoffswitch-label" for="deviceCheckbox">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+    </div>   
+
+  </div> 
+
+<!--
+
+  <h3> &nbsp&nbsp BẬT TẮT ĐÈN </h3>
+  <tr>
+    <td width="200">&nbsp Phòng khách</td>
+    <td>
+    <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitchPL" class="onoffswitch-checkbox" id="PK">
+        <label class="onoffswitch-label" for="PK">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+    </div>
+    </td>
+  </tr>
+
+  <tr>
+    <td>&nbsp Phòng ngủ</td>
+    <td>
+    <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="PN">
+        <label class="onoffswitch-label" for="PN">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+    </div>
+    </td>
+  </tr>
+    <tr>
+    <td>&nbsp Phòng bếp</td>
+    <td>
+    <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="PB">
+        <label class="onoffswitch-label" for="PB">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+    </div>
+    </td>
+  </tr> 
+  -->
+  </table>
+
+<table width="1000" border="0" >
+  <h3> &nbsp&nbsp KIỂM TRA QUẠT THÔNG GIÓ </h3>
+  <tr>
+    <td>
+    <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitchMB" class="onoffswitch-checkbox" id="RelayCheckbox">
+        <label class="onoffswitch-label" for="RelayCheckbox">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+    </div>
+    </td>
+  </tr>
+  </table>
+
+</div>
+
+<div id="Data" class="tabcontent">
+
+<button type="button" class="btn btn-primary" id="btnSensorbyTime"  name="btnSensorbyTime" value="OK" type="button">Nhiệt độ-độ ẩm theo giờ</button>
+<button type="button" class="btn btn-primary" id="btnSensorbyDate"  name="btnSensorbyDate" value="OK" type="button">Nhiệt độ-độ ẩm theo ngày</button>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <div id="tempcontainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <div id="humicontainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+</div>
+
+<!--Tab menu-->
+
+<!--Biểu đồ nhiệt độ-->
+<div id="ChartbyTime">
+  
+</div>
+
+</body>
+</html> 
